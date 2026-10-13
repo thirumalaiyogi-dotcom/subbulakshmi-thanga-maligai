@@ -1,9 +1,13 @@
 // Cloudflare Workers (static assets only — no server code).
-// Build: `sh build.sh` copies index.html, admin.html, css/, js/ and _headers into dist/.
+// Build: `sh build.sh` (run by wrangler itself, see "build" below) copies index.html, admin.html, css/, js/ and _headers into dist/.
 // Deploy: `npx wrangler deploy` publishes dist/. _headers is parsed (security headers), not served.
 {
   "name": "subbulakshmi-thanga-maligai",
   "compatibility_date": "2026-10-01",
+  // Runs automatically before every `wrangler deploy` (no dashboard build command needed)
+  "build": {
+    "command": "sh build.sh"
+  },
   "assets": {
     "directory": "./dist"
   }
