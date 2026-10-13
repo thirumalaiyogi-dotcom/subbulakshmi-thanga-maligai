@@ -255,7 +255,7 @@ python tests/frontend/layout_test.py        # no horizontal overflow, 6 widths �
 
 ## 10. Deployment
 
-The app is static files and has no build step.
+The app is static files. There is no compile step, only a copy into `dist/`.
 
 **What to deploy:**
 - `index.html`, `admin.html`, `css/`, `js/`.
@@ -263,12 +263,33 @@ The app is static files and has no build step.
 **Do not deploy:**
 - `tests/`, `supabase/` (SQL for the dashboard), `package.json`, `node_modules/`, `README.md`, `SETUP.md`.
 
-**Hosting options:**
+**Build:** `sh build.sh` copies only `index.html`, `admin.html`, `css/`, `js/` and the `_headers` file into `dist/`. `_headers` adds security headers on Cloudflare Pages and Netlify:
+- CSP: scripts only from the site, and data only to `*.supabase.co`;
+- no framing;
+- `noindex` on admin;
+- `no-cache` on `config.js`.
 
-| Host | Steps |
-|---|---|
-| Netlify (recommended) | Add new site → Import from GitHub → `subbulakshmi-thanga-maligai`. No settings needed: `netlify.toml` copies only `index.html`, `admin.html`, `css/`, `js/` into `dist/` and publishes that, and adds security headers (CSP: scripts only from the site, data only to `*.supabase.co`; no framing; `noindex` on admin). Every push to `main` redeploys. |
-| Cloudflare Pages / GitHub Pages / Vercel | Same: a static site, no build command. |
+**Hosting options (free plans, checked 13 Oct 2026; limits change, so check again):**
+
+| Host | Free limits | Verdict |
+|---|---|---|
+| **Cloudflare Pages (recommended)** | 500 builds / month, private repos OK, `_headers` supported | Best fit: frequent pushes are fine. |
+| Netlify | 300 credits / month; **each production deploy = 15 credits** (≈ 20 deploys/month if nothing else is used). Bandwidth also uses credits. When credits run out, **all sites pause until next month**. Deploy previews are free. | Works, but push to `main` sparingly. |
+| GitHub Pages | Free only for **public** repos. GitHub's terms do not allow it for running an online business / e-commerce, or for sending passwords. No custom headers. | Not suitable for this store. |
+
+**Cloudflare Pages setup:**
+1. dash.cloudflare.com → **Workers & Pages → Create → Pages → Connect to Git**, then choose `subbulakshmi-thanga-maligai`.
+2. Fill in the build settings:
+   - Framework preset: **None**
+   - Build command: `sh build.sh`
+   - Build output directory: `dist`
+3. Click **Save and Deploy**. Every push to `main` redeploys.
+4. Cloudflare serves `admin.html` at `/admin` and `index.html` at `/` (it removes `.html`). Links still work.
+5. In Supabase Auth → URL Configuration:
+   - **Site URL:** `https://<name>.pages.dev`
+   - **Redirect URLs:** `https://<name>.pages.dev/**`
+
+**Netlify setup:** Add new site → Import from GitHub. `netlify.toml` already sets `sh build.sh` and `dist`.
 
 **After deploying:** put the final site address into Supabase Auth → URL Configuration (step 5).
 

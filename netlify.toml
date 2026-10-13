@@ -1,32 +1,4 @@
-# Netlify deployment for Subbulakshmi Thanga Maligai
-# Only the app (index.html, admin.html, css/, js/) is published.
-# supabase/ (SQL), tests/ (test-only mock), docs and package.json are NOT published.
-
+# Netlify deployment. Headers come from the _headers file (shared with Cloudflare Pages).
 [build]
-  command = "rm -rf dist && mkdir -p dist && cp -r index.html admin.html css js dist/"
+  command = "sh build.sh"
   publish = "dist"
-
-# Security headers for every page
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "DENY"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Strict-Transport-Security = "max-age=31536000"
-    # Scripts only from this site (no inline scripts are used). Data only to Supabase.
-    # 'unsafe-inline' is for style="" attributes in the UI, not for scripts.
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
-
-# Admin pages stay out of search engines
-[[headers]]
-  for = "/admin.html"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-
-# Always fetch the latest config (Supabase URL / store details)
-[[headers]]
-  for = "/js/config.js"
-  [headers.values]
-    Cache-Control = "no-cache"
