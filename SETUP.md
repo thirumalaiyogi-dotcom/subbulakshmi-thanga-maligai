@@ -281,7 +281,7 @@ The app is static files. There is no compile step, only a copy into `dist/`.
 1. dash.cloudflare.com → **Workers & Pages → Create → Import a repository**, then choose `subbulakshmi-thanga-maligai`.
 2. Fill in the settings:
    - Project name: `subbulakshmi-thanga-maligai`. This must match `"name"` in `wrangler.jsonc`.
-   - Build command: `sh build.sh`
+   - Build command: leave it empty. `wrangler.jsonc` runs `sh build.sh` itself, so it works even if the dashboard shows "None".
    - Deploy command: `npx wrangler deploy` (the default)
    - Path: `/`
    - No variables or secrets are needed. Never add the Supabase secret key here.
@@ -291,6 +291,8 @@ The app is static files. There is no compile step, only a copy into `dist/`.
 6. Supabase Auth → URL Configuration:
    - **Site URL:** `https://subbulakshmi-thanga-maligai.<account>.workers.dev`
    - **Redirect URLs:** the same address followed by `/**`
+
+**Deployed:** 13 Oct 2026, Workers Builds reported success for commit `d4148d1`.
 
 Verified locally with `wrangler dev` (wrangler 4.150): pages load in DEMO and Supabase-mock mode with no CSP or JS errors; the security headers are present; `noindex` is set on `/admin`; `/supabase/…`, `/tests/…` and `/_headers` return 404.
 
