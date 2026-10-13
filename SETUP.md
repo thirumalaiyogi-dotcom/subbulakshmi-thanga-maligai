@@ -273,21 +273,26 @@ The app is static files. There is no compile step, only a copy into `dist/`.
 
 | Host | Free limits | Verdict |
 |---|---|---|
-| **Cloudflare Pages (recommended)** | 500 builds / month, private repos OK, `_headers` supported | Best fit: frequent pushes are fine. |
+| **Cloudflare Workers / Pages (recommended)** | 500 builds / month (Pages docs), private repos OK, `_headers` supported | Best fit: frequent pushes are fine. |
 | Netlify | 300 credits / month; **each production deploy = 15 credits** (≈ 20 deploys/month if nothing else is used). Bandwidth also uses credits. When credits run out, **all sites pause until next month**. Deploy previews are free. | Works, but push to `main` sparingly. |
 | GitHub Pages | Free only for **public** repos. GitHub's terms do not allow it for running an online business / e-commerce, or for sending passwords. No custom headers. | Not suitable for this store. |
 
-**Cloudflare Pages setup:**
-1. dash.cloudflare.com → **Workers & Pages → Create → Pages → Connect to Git**, then choose `subbulakshmi-thanga-maligai`.
-2. Fill in the build settings:
-   - Framework preset: **None**
+**Cloudflare setup (Workers "Set up your application" screen):**
+1. dash.cloudflare.com → **Workers & Pages → Create → Import a repository**, then choose `subbulakshmi-thanga-maligai`.
+2. Fill in the settings:
+   - Project name: `subbulakshmi-thanga-maligai`. This must match `"name"` in `wrangler.jsonc`.
    - Build command: `sh build.sh`
-   - Build output directory: `dist`
-3. Click **Save and Deploy**. Every push to `main` redeploys.
-4. Cloudflare serves `admin.html` at `/admin` and `index.html` at `/` (it removes `.html`). Links still work.
-5. In Supabase Auth → URL Configuration:
-   - **Site URL:** `https://<name>.pages.dev`
-   - **Redirect URLs:** `https://<name>.pages.dev/**`
+   - Deploy command: `npx wrangler deploy` (the default)
+   - Path: `/`
+   - No variables or secrets are needed. Never add the Supabase secret key here.
+3. Click **Deploy**. Every push to `main` redeploys.
+4. `wrangler.jsonc` publishes only `dist/`. `_headers` is applied as headers, not served.
+5. Cloudflare redirects `/index.html` to `/` and `/admin.html` to `/admin`. Links still work.
+6. Supabase Auth → URL Configuration:
+   - **Site URL:** `https://subbulakshmi-thanga-maligai.<account>.workers.dev`
+   - **Redirect URLs:** the same address followed by `/**`
+
+Verified locally with `wrangler dev` (wrangler 4.150): pages load in DEMO and Supabase-mock mode with no CSP or JS errors; the security headers are present; `noindex` is set on `/admin`; `/supabase/…`, `/tests/…` and `/_headers` return 404.
 
 **Netlify setup:** Add new site → Import from GitHub. `netlify.toml` already sets `sh build.sh` and `dist`.
 
