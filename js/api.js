@@ -12,6 +12,7 @@
 addStrings({
   err_network: 'Could not reach the server. Check your internet connection and try again.',
   err_forbidden: 'You do not have permission for this action.', err_not_found: 'Not found.',
+  err_not_setup: 'The store database is not set up yet. (Admin: apply the Supabase migrations — see SETUP.md step 3.)',
   err_server: 'Something went wrong. Please try again.', err_invalid_data: 'Some details are not valid. Please check and try again.',
   err_duplicate: 'This already exists.', err_login_required: 'Please log in to continue.',
   err_product_unavailable: 'An item in your cart is no longer available.', err_product_out_of_stock: 'An item in your cart is out of stock.',
@@ -34,6 +35,7 @@ addStrings({
 }, {
   err_network: 'Server-ஐ அணுக இயலவில்லை. இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
   err_forbidden: 'இந்தச் செயலுக்கு உங்களுக்கு அனுமதி இல்லை.', err_not_found: 'கிடைக்கவில்லை.',
+  err_not_setup: 'கடையின் database இன்னும் அமைக்கப்படவில்லை. (நிர்வாகி: Supabase migrations-ஐ இயக்கவும் — SETUP.md படி 3.)',
   err_server: 'ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்.', err_invalid_data: 'சில விவரங்கள் சரியாக இல்லை. சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
   err_duplicate: 'இது ஏற்கெனவே உள்ளது.', err_login_required: 'தொடர உள்நுழையவும்.',
   err_product_unavailable: 'கூடையிலுள்ள ஒரு நகை இப்போது கிடைக்கவில்லை.', err_product_out_of_stock: 'கூடையிலுள்ள ஒரு நகை இருப்பில் இல்லை.',
@@ -96,6 +98,8 @@ function toApiError(error) {
   const m = msg.match(/^([a-z_]+)(?::(.*))?$/);                 // codes raised by our database functions
   if (m && I18N.en['err_' + m[1]]) return new ApiError(m[1], m[2]);
   if (error.code === '42501' || /permission denied|row-level security/i.test(msg)) return new ApiError('forbidden', msg);
+  // missing table / function / column = migrations not applied in this Supabase project
+  if (['PGRST205', 'PGRST202', '42P01', '42883', 'PGRST204'].includes(error.code)) return new ApiError('not_setup', msg);
   if (error.code === 'PGRST116') return new ApiError('not_found', msg);
   if (error.code === '23505') return new ApiError('duplicate', msg);
   if (['23514', '22P02', '23502', '22001', '22023'].includes(error.code)) return new ApiError('invalid_data', msg);
