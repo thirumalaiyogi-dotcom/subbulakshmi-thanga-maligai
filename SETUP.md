@@ -267,7 +267,7 @@ The app is static files and has no build step.
 
 | Host | Steps |
 |---|---|
-| Netlify | Drag a folder containing only the deployable files onto app.netlify.com/drop, or connect the repo and set "publish directory". |
+| Netlify (recommended) | Add new site → Import from GitHub → `subbulakshmi-thanga-maligai`. No settings needed: `netlify.toml` copies only `index.html`, `admin.html`, `css/`, `js/` into `dist/` and publishes that, and adds security headers (CSP: scripts only from the site, data only to `*.supabase.co`; no framing; `noindex` on admin). Every push to `main` redeploys. |
 | Cloudflare Pages / GitHub Pages / Vercel | Same: a static site, no build command. |
 
 **After deploying:** put the final site address into Supabase Auth → URL Configuration (step 5).
