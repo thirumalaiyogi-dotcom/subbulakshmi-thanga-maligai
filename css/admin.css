@@ -1,0 +1,76 @@
+/* =========================================================
+   ADMIN APP — KPI cards, queues, charts, catalogue tables
+   ========================================================= */
+.kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:760px){.kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.kpi{position:relative;padding:16px;border-radius:var(--radius);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-1);min-width:0}
+.kpi span{display:block;font-size:12.5px;color:var(--ink-3);line-height:1.35}
+.kpi b{display:block;margin-top:6px;font-family:var(--font-display);font-size:28px;line-height:1.1;color:var(--maroon);font-variant-numeric:lining-nums tabular-nums;overflow-wrap:anywhere}
+.kpi small{display:block;margin-top:4px;font-size:12px;color:var(--ink-2)}
+.kpi--accent{background:linear-gradient(150deg,#5A1423,#3E0D18);border-color:transparent}
+.kpi--accent span,.kpi--accent small{color:rgba(244,232,201,.75)}
+.kpi--accent b{color:#FBEFD0}
+.rate-card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;padding:18px;border-radius:var(--radius);background:linear-gradient(135deg,#FFFBF0,#F6EAD0);border:1px solid var(--gold-3)}
+.rate-card b{display:block;font-family:var(--font-display);font-size:34px;line-height:1.1;color:var(--maroon)}
+.rate-card span{font-size:12.5px;color:var(--ink-2)}
+.queue{display:grid;gap:12px}
+@media (min-width:900px){.queue{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.qcard{padding:16px;border-radius:var(--radius);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-1)}
+.qcard-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.qcard-head strong{display:block}
+.qcard-head small{display:block;font-size:12px;color:var(--ink-3)}
+.qcard .kv{margin-top:12px;font-size:13.5px}
+.qcard-actions{display:flex;gap:8px;margin-top:14px}
+.qcard-actions .btn{flex:1}
+.bars{display:flex;align-items:flex-end;gap:8px;height:180px;padding:10px 4px 0;border-bottom:1px solid var(--line)}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;min-width:0}
+.bar i{display:block;width:100%;max-width:38px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--gold-2),var(--gold));min-height:3px}
+.bar small{font-size:10.5px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.bar-labels{display:flex;gap:8px;padding:6px 4px 0}
+.bar-labels span{flex:1;min-width:0;text-align:center;font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.split{display:grid;gap:12px}
+.split-row > div:first-child{display:flex;justify-content:space-between;gap:10px;font-size:13.5px}
+.split-row .progress{margin-top:6px}
+.activity{list-style:none}
+.activity li{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.activity li:last-child{border-bottom:0}
+.activity .tx-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;flex:none}
+.activity .tx-ic .ic{width:15px;height:15px}
+.activity li > div:not(.tx-ic){flex:1;min-width:0}
+.activity small{display:block;color:var(--ink-3);font-size:12px}
+.tx-ic--verified{background:var(--ok-bg);color:var(--ok)}
+.tx-ic--pending{background:var(--warn-bg);color:var(--warn)}
+.tx-ic--rejected{background:var(--err-bg);color:var(--err)}
+.danger-zone{border-color:#EFC7C2}
+.thumb-cell{display:flex;align-items:center;gap:10px;min-width:0}
+.thumb-cell .art{width:44px;flex:none;border-radius:10px;overflow:hidden}
+@media (max-width:900px){.thumb-cell{justify-content:flex-end;text-align:right}}
+/* passbook pieces reused in admin records */
+.pb-cover{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:22px 20px;border-radius:20px;background:linear-gradient(135deg,#FFFDF7,#F7EEDB);border:1px solid var(--gold-3)}
+.pb-cover h1{font-family:var(--font-display);font-size:clamp(22px,5.6vw,30px);line-height:1.15;color:var(--maroon);margin-top:4px}
+html[lang="ta"] .pb-cover h1{font-family:var(--font-display-ta);font-size:clamp(17px,4.6vw,22px);line-height:1.45}
+.pb-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin-top:12px}
+.pb-meta dt{font-size:11.5px;color:var(--ink-3)}
+.pb-meta dd{font-size:13.5px;font-weight:600;overflow-wrap:anywhere}
+.pb-stamp{position:absolute;right:16px;top:14px;padding:2px 10px;border:2px solid rgba(155,44,44,.5);color:rgba(155,44,44,.7);border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.2em;transform:rotate(8deg)}
+@media (max-width:520px){.pb-cover{grid-template-columns:1fr}.pb-cover .ring{justify-self:start}}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{padding:14px;border-radius:14px;background:var(--white);border:1px solid var(--line);min-width:0}
+.stat span{display:block;font-size:12px;color:var(--ink-3);line-height:1.35}
+.stat b{display:block;margin-top:4px;font-size:17px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat small{display:block;margin-top:2px;font-size:11px;color:var(--gold)}
+@media (max-width:520px){.stat-row{grid-template-columns:1fr 1fr}.stat-row .stat:last-child{grid-column:1/-1}}
+.enr-foot{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:8px;font-size:12.5px;color:var(--ink-2)}
+.scheme-grid{display:grid;gap:18px}
+@media (min-width:860px){.scheme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.art{position:relative;display:block;width:100%;aspect-ratio:1;background:#FBF4E6}
+.art svg{width:100%;height:100%}
+.art-bg{fill:#FBF4E6}.art-glow{fill:#F3E6CB}
+.art-line{fill:none;stroke:var(--gold);stroke-linecap:round;stroke-linejoin:round}
+.art-fill{fill:var(--gold-2);stroke:var(--gold);stroke-width:1.5}
+.art-gem{fill:var(--maroon-2);stroke:var(--gold);stroke-width:1.5}
+.art-silver{fill:none;stroke:var(--silver);stroke-linecap:round;stroke-linejoin:round}
+.art-silver-fill{fill:#D9DCDF;stroke:var(--silver);stroke-width:1.5}
+.sample-tag{display:none}
+/* visually hidden file input: show the keyboard focus on its button-styled label */
+.field:has(> input[type="file"].sr-only:focus-visible) > label.btn{outline:3px solid var(--gold,#C9A227);outline-offset:2px}

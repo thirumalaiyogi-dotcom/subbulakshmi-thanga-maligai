@@ -1,0 +1,11 @@
+{
+  "name": "stm-app-tests",
+  "private": true,
+  "description": "Development-only test tooling. The app itself has no build step and no npm dependencies.",
+  "scripts": {
+    "test:db": "node tests/db/run-db-tests.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.9"
+  }
+}

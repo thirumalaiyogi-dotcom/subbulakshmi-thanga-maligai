@@ -1,0 +1,26 @@
+/* =========================================================
+   DESIGN TOKENS — Subbulakshmi Thanga Maligai
+   Brand: deep maroon · royal gold · warm ivory · white · charcoal text
+   ========================================================= */
+:root{
+  --maroon:#5A1423; --maroon-2:#7A1E31; --maroon-3:#3E0D18; --maroon-tint:#F6E9EA;
+  --gold:#B08A3A; --gold-2:#D4B26A; --gold-3:#E9D6A6; --gold-soft:#F4E8C9;
+  --ivory:#FBF7EF; --ivory-2:#F4EDE0; --white:#FFFFFF;
+  --ink:#2A2523; --ink-2:#5E5550; --ink-3:#7D746D;
+  --line:#E6DAC4; --line-2:#EFE6D6;
+  --silver:#8C9298;
+  --ok:#2F6B4F; --ok-bg:#E5F1EA;
+  --warn:#8A5A12; --warn-bg:#FBF0D9;
+  --err:#9B2C2C; --err-bg:#F8E3E1;
+  --info:#2D4E7A; --info-bg:#E6EDF6;
+  --neutral:#5E5550; --neutral-bg:#EFEAE2;
+  --wa:#1F7A4D;
+  --radius:16px; --radius-sm:12px;
+  --shadow-1:0 1px 2px rgba(62,13,24,.05),0 4px 14px rgba(62,13,24,.05);
+  --shadow-2:0 10px 34px rgba(62,13,24,.16);
+  --font-ui:"DM Sans","Noto Sans Tamil",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-ta:"Noto Sans Tamil","DM Sans",system-ui,sans-serif;
+  --font-display:"Cormorant Garamond","Noto Serif Tamil",Georgia,serif;
+  --font-display-ta:"Noto Serif Tamil","Cormorant Garamond",Georgia,serif;
+  --nav-h:64px; --top-h:60px; --sb-w:272px;
+}
