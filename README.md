@@ -1,6 +1,20 @@
 # Subbulakshmi Thanga Maligai — Jewellery & Gold Savings App
 
-**Phase 4: Supabase backend (catalogue, accounts, wishlist, order requests, admin), v0.3**
+**Phase 5: gold savings on the real backend (schemes, enrollments, installments, UPI verification, in-store payments, gold rates, redemptions, audit), v0.4**
+(Phase 4: Supabase backend for catalogue, accounts, wishlist, order requests and admin.)
+
+> **Phase 5 at a glance:**
+> - **Audit of the old demo:** [docs/PHASE5_AUDIT.md](docs/PHASE5_AUDIT.md)
+> - **Final report** (files, SQL, policies, tests, what is live, what still needs the owner's approval): [docs/PHASE5_REPORT.md](docs/PHASE5_REPORT.md)
+> - **Database update for an existing Phase 4 project:** run `supabase/PHASE5_UPDATE.sql` once in the SQL Editor.
+> - **Scheme terms are NOT approved yet.** Both schemes show "DEMO / NOT APPROVED", and customers cannot enroll until an admin enters the owner-approved terms and records the approval.
+> - **Tests run on 14 Oct 2026:**
+>   - database: 71 + 103 pass;
+>   - savings browser test: 52 / 52;
+>   - Phase 4 browser test: 59 / 59;
+>   - DEMO regression: 57 / 57;
+>   - layout: 792 pages, 0 problems.
+> - **Not yet tested against the live Supabase project.**
 
 The app has two modes. They are chosen automatically by `js/config.js`.
 

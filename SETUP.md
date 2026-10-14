@@ -1,4 +1,4 @@
-# Phase 4 setup — Supabase backend
+# Setup — Supabase backend (Phase 4 + Phase 5)
 
 This guide connects the app to a real Supabase project. With an empty configuration the app runs in **DEMO mode** with fictional data, exactly as in Phase 2/3.
 
@@ -303,6 +303,41 @@ Verified locally with `wrangler dev` (wrangler 4.150): pages load in DEMO and Su
 **HTTPS is required:** Supabase auth will not work reliably from `http://` pages other than localhost.
 
 `admin.html` can now be published, because it requires a login and a database role. A `noindex` meta tag keeps it out of search engines.
+
+## 10b. Phase 5 — gold savings (database update)
+
+**If Phase 4 is already set up** (your project): open SQL Editor → New query, paste all of `supabase/PHASE5_UPDATE.sql` → **Run**. The result should be "Success. No rows returned". **New project:** `supabase/SETUP_ALL_IN_ONE.sql` already contains Phase 5.
+
+**Before customers can enroll:**
+1. Get the shop owner's written approval of each scheme's terms. See the list in `docs/PHASE5_REPORT.md` §8.
+2. Go to Admin → Savings schemes → **Edit terms**:
+   - Enter only the approved values.
+   - Leave anything undecided empty; it shows as "Not configured".
+3. **Record owner approval:**
+   - Write how and when the owner approved (e.g. "signed terms sheet dated …").
+   - Tick the confirmation box.
+4. **Open enrollment.**
+5. Admin → Gold rate: enter today's 22K / 24K rate with its source. This is needed if a scheme uses gold conversion.
+
+**Daily work:**
+
+| Task | Who | Where |
+|---|---|---|
+| Approve enrollment requests | Admin | Scheme enrollments |
+| Verify / reject customer UPI references against the bank statement | **Admin only** | Installments & verification |
+| Record a payment made at the counter | Staff or admin | Passbook & records → open enrollment → *Record in-store payment* |
+| Correct a mistaken payment | Admin | *Void (correct)*, with a reason. The record stays. |
+| Enter today's gold rate | Admin | Gold rate. Mistakes are withdrawn with a reason; nothing is overwritten. |
+| Redemption requests | Admin | Redemption requests → approve / reject → mark completed |
+| Check who changed what | Admin | Financial audit log |
+
+**Test on a development project:**
+
+```bash
+psql "<connection string>" -f supabase/tests/savings_security_tests.sql
+```
+
+All rows should show `passed = true`. The suite rolls back, so no data remains.
 
 ## 11. Known limitations (honest)
 

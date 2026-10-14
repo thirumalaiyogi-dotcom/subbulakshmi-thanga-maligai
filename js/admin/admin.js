@@ -28,6 +28,15 @@ if (isLive()) {
     overview: fillOverviewLive, products: () => renderAdminProducts(), 'product-edit': fillProductEdit,
     categories: renderAdminCategories, orders: () => renderAdminOrders(), 'admin-order': fillAdminOrder
   });
+  /* Phase 5: gold savings on the real backend (reports stay DEMO) */
+  Object.assign(APP.pages, {
+    schemes: aSchemesLive, 'scheme-edit': aSchemeEdit, enrollments: aEnrollmentsLive, payments: aPaymentsLive, records: aRecordsLive,
+    customers: aCustomersLive, redemptions: aRedemptionsLive, goldrate: aGoldrateLive, audit: aAuditLive
+  });
+  Object.assign(APP.after, {
+    schemes: fillSchemesAdmin, 'scheme-edit': fillSchemeEdit, enrollments: fillEnrollmentsAdmin, payments: fillPaymentsAdmin, records: fillRecordsAdmin,
+    customers: fillCustomersAdmin, redemptions: fillRedemptionsAdmin, goldrate: fillGoldrateAdmin, audit: fillAuditAdmin
+  });
 }
 APP.resolve = r => {
   if (isLive()) {
@@ -40,7 +49,7 @@ APP.resolve = r => {
   if (!r.page || r.page === 'gate') return Object.assign({}, r, { page: 'overview' });
   return r;
 };
-const ADMIN_TITLES = { login: 'adminLoginTitle', denied: 'deniedTitle', gate: 'gateTitle', 'product-edit': 'editProduct', 'admin-order': 'orderTitle' };
+const ADMIN_TITLES = { login: 'adminLoginTitle', denied: 'deniedTitle', gate: 'gateTitle', 'product-edit': 'editProduct', 'admin-order': 'orderTitle', 'scheme-edit': 'editTerms' };
 APP.titleOf = page => t(ADMIN_TITLES[page] || ('a_' + page)) + ' · ' + t('admin');
 
 Object.assign(CHANGES, {

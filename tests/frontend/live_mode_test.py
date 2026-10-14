@@ -144,7 +144,8 @@ async def main():
         ok('i18n: Tamil works in Supabase mode', 'ஆர்டர்' in await pg.inner_text('#app'))
         await pg.click('.topbar [data-action="set-lang"][data-v="en"]'); await w(400)
         await pg.goto(C + '#/savings'); await w(700)
-        ok('savings: demo savings screens still open (labelled)', 'DEMO' in await pg.inner_text('#app'))
+        tx = await pg.inner_text('#app')
+        ok('savings: real savings screen (Phase 5) — no fictional DEMO passbook data', 'My savings schemes' in tx and 'Meenakshi' not in tx and 'DEMO-KL' not in tx, tx[:120])
         # ---------- logout / login ----------
         await pg.goto(C + '#/account'); await w(700)
         await pg.click('[data-action="logout"]'); await w(300)

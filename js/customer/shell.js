@@ -8,18 +8,19 @@ addStrings({
   sv_overview: 'Overview', storeTagline: 'Jewellery · Gold Savings', cartAria: 'Shopping cart',
   primaryNav: 'Main navigation', savingsNav: 'Savings sections', openAdminPage: 'Store admin view (prototype)',
   enterStore: 'Enter the store',
-  liveStrip: 'Gold savings screens are a DEMO preview · No online payments · Order requests are confirmed by the store'
+  liveStrip: 'Savings records come from the store database · Schemes marked NOT APPROVED are not yet official · No online payment gateway'
 }, {
   n_home: 'முகப்பு', n_shop: 'நகைகள்', n_wishlist: 'பிடித்தவை', n_savings: 'சேமிப்பு', n_account: 'கணக்கு', n_cart: 'கூடை',
   sv_overview: 'சுருக்கம்', storeTagline: 'நகைகள் · தங்கச் சேமிப்பு', cartAria: 'வாங்கும் கூடை',
   primaryNav: 'முதன்மை வழிசெலுத்தல்', savingsNav: 'சேமிப்புப் பகுதிகள்', openAdminPage: 'கடை நிர்வாகப் பார்வை (மாதிரி)',
   enterStore: 'கடைக்குள் செல்லவும்',
-  liveStrip: 'தங்கச் சேமிப்புத் திரைகள் டெமோ முன்னோட்டம் · ஆன்லைன் பணம் செலுத்துதல் இல்லை · ஆர்டர் கோரிக்கைகளைக் கடை உறுதிசெய்யும்'
+  liveStrip: 'சேமிப்புப் பதிவுகள் கடையின் database-லிருந்து · "ஒப்புதல் இல்லை" எனக் குறித்த திட்டங்கள் இன்னும் அதிகாரப்பூர்வமானவை அல்ல · ஆன்லைன் பணம் செலுத்தும் வசதி இல்லை'
 });
 
 const BOTTOM_NAV = [['home', 'home', 'n_home'], ['shop', 'shop', 'n_shop'], ['wishlist', 'heart', 'n_wishlist'], ['savings', 'coins', 'n_savings'], ['account', 'user', 'n_account']];
 const SAVINGS_NAV = [['savings', 'sv_overview'], ['schemes', 'schemes'], ['passbook', 'passbook'], ['transactions', 'history'], ['pay', 'payInstallment'], ['redeem', 'redemption']];
-const SAVINGS_PAGES = ['savings', 'schemes', 'scheme', 'passbook', 'transactions', 'pay', 'redeem'];
+const SAVINGS_PAGES = ['savings', 'schemes', 'scheme', 'passbook', 'transactions', 'pay', 'redeem', 'goldrate'];
+if (isLive()) SAVINGS_NAV.push(['goldrate', 'goldRateTitle']);
 
 function navOf(page) {
   if (page === 'product') return 'shop';

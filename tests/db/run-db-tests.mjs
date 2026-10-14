@@ -21,21 +21,28 @@ console.log('Applying shim, migrations and seeds:');
 await run('tests/db/supabase_shim.sql', read('tests/db/supabase_shim.sql'));
 for (const f of readdirSync(join(root, 'supabase/migrations')).sort()) await run('migrations/' + f, read('supabase/migrations/' + f));
 await run('seed/01_categories.sql', read('supabase/seed/01_categories.sql'));
+await run('seed/02_savings_schemes.sql', read('supabase/seed/02_savings_schemes.sql'));
 await run('seed/dev_only_demo_products.sql', read('supabase/seed/dev_only_demo_products.sql'));
 // migrations must be re-runnable without errors or data loss
 for (const f of readdirSync(join(root, 'supabase/migrations')).sort()) await run('re-run migrations/' + f, read('supabase/migrations/' + f));
 
-// Execute the suite but keep the results: swap the final ROLLBACK for a read of the results table.
-const suite = read('supabase/tests/security_tests.sql').replace(/\nrollback;\s*$/, '\n');
-const out = await db.exec(suite);
-const rows = out.filter(r => r.fields && r.fields.some(f => f.name === 'detail')).pop().rows;
-await db.exec('rollback');
-
-let failed = 0;
-console.log('\nSecurity tests:');
-for (const r of rows) {
-  if (!r.passed) failed++;
-  console.log((r.passed ? '  PASS ' : '  FAIL ') + r.name + (r.passed ? '' : '\n       ' + r.detail));
+// Execute each suite but keep the results: swap the final ROLLBACK for a read of the results table.
+async function suite(file, title) {
+  const sql = read(file).replace(/\nrollback;\s*$/, '\n');
+  const out = await db.exec(sql);
+  const rows = out.filter(r => r.fields && r.fields.some(f => f.name === 'detail')).pop().rows;
+  await db.exec('rollback');
+  let failed = 0;
+  console.log('\n' + title + ':');
+  for (const r of rows) {
+    if (!r.passed) failed++;
+    console.log((r.passed ? '  PASS ' : '  FAIL ') + r.name + (r.passed ? '' : '\n       ' + r.detail));
+  }
+  console.log(`  -> ${rows.length - failed} passed, ${failed} failed, ${rows.length} total`);
+  return { total: rows.length, failed };
 }
-console.log(`\n${rows.length - failed} passed, ${failed} failed, ${rows.length} total`);
+const a = await suite('supabase/tests/security_tests.sql', 'Phase 4 security tests');
+const b = await suite('supabase/tests/savings_security_tests.sql', 'Phase 5 savings security tests');
+const total = a.total + b.total, failed = a.failed + b.failed;
+console.log(`\n${total - failed} passed, ${failed} failed, ${total} total`);
 process.exit(failed ? 1 : 0);

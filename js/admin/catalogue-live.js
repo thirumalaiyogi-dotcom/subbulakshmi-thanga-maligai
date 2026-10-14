@@ -87,9 +87,10 @@ const adminOnlyNote = () => '<div class="note note--warn">' + ic('shield') + '<s
 function aOverviewLive() {
   return aHead('overview') +
     '<section aria-labelledby="skH"><h2 class="h2 section-head" id="skH">' + t('storeKpis') + '</h2><div class="kpi-grid" id="storeKpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></section>' +
-    '<h2 class="h2">' + t('savingsDemoHeading') + '</h2>' + aOverview().replace(aHead('overview'), '');
+    '<section aria-labelledby="svkH"><h2 class="h2 section-head" id="svkH">' + t('savingsLiveHeading') + '</h2><div id="svOverviewRates"></div><div class="kpi-grid" id="svKpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></section>';
 }
 function fillOverviewLive(token) {
+  if (typeof fillSavingsKpis === 'function') fillSavingsKpis(token);
   fillAsync('#storeKpis', token, () => AdminApi.storeCounts(), c =>
     '<button class="kpi" data-go="orders" style="text-align:left"><span>' + t('requestedOrders') + '</span><b>' + c.requested + '</b></button>' +
     '<button class="kpi" data-go="orders" style="text-align:left"><span>' + t('openOrders') + '</span><b>' + c.open + '</b></button>' +
