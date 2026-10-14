@@ -403,7 +403,49 @@ select sv_test.expect_error('redeem: no further payments after redemption',
   $q$select * from public.submit_upi_payment(sv_test.id('c_i3'), 1000, 'UTR777777777', current_date)$q$, 'enrollment_not_active');
 select sv_test.expect_error('redeem: customer cannot cancel a completed request', $q$select public.cancel_my_redemption(sv_test.id('c_rdm'))$q$, 'cannot_cancel');
 
+-- ---------------------------------------------------------------- migration 7: fixed amount in a range + payment-date rate
+select sv_test.act_as('d0000000-0000-4000-8000-000000000003');
+insert into public.savings_schemes (id, name_en, name_ta, contribution_type, duration_months, min_installment, max_installment, gold_conversion, conversion_purity, redemption_after_months, terms_en, terms_ta)
+values ('t-kuber', 'Test Kuber', 'சோதனை குபேர', 'fixed', 12, 1000, 100000, 'payment_date_rate', '22K', 12,
+        'TEST ONLY — any fixed amount 1000-100000, converted at the paid date rate.', 'சோதனை மட்டும் — 1000-100000 நிலைத் தொகை, செலுத்திய நாள் விலையில் மாற்றம்.');
+select public.admin_approve_scheme('t-kuber', 'TEST: owner approval recorded');
+select sv_test.expect_value('m7: fixed scheme with a min–max range (no list) can be approved',
+  $q$select approval_status from public.savings_schemes where id = 't-kuber'$q$, 'approved');
+update public.savings_schemes set enrollment_open = true where id = 't-kuber';
+-- yesterday's board rate (IST 10:00) and today's rate
+select public.admin_add_gold_rates(8800, null, ((((now() at time zone 'Asia/Kolkata')::date - 1) + time '10:00') at time zone 'Asia/Kolkata'), 'TEST yesterday rate');
+select public.admin_add_gold_rates(8900, null, now() - interval '1 second', 'TEST today rate');
+reset role;
+select sv_test.act_as('d0000000-0000-4000-8000-000000000002');
+select sv_test.expect_error('m7: fixed amount below the minimum refused', $q$select * from public.request_enrollment('t-kuber', 999)$q$, 'invalid_amount');
+select sv_test.expect_error('m7: fixed amount above the maximum refused', $q$select * from public.request_enrollment('t-kuber', 100001)$q$, 'invalid_amount');
+insert into sv_test.ids select 'd_kub', enrollment_id from public.request_enrollment('t-kuber', 1500);
+select sv_test.expect_value('m7: any amount inside the range accepted and kept as the fixed amount',
+  $q$select fixed_amount::text || ':' || gold_conversion from public.savings_enrollments where id = sv_test.id('d_kub')$q$, '1500.00:payment_date_rate');
+reset role;
+select sv_test.act_as('d0000000-0000-4000-8000-000000000003');
+select public.admin_decide_enrollment(sv_test.id('d_kub'), true, sv_test.month0(), null);
+insert into sv_test.ids select 'k_i' || installment_no, id from public.savings_installments where enrollment_id = sv_test.id('d_kub');
+reset role;
+select sv_test.act_as('d0000000-0000-4000-8000-000000000002');
+select sv_test.expect_error('m7: every installment must be the same fixed amount',
+  $q$select * from public.submit_upi_payment(sv_test.id('k_i1'), 2000, 'UTR880000001', (now() at time zone 'Asia/Kolkata')::date - 1)$q$, 'amount_mismatch');
+select status from public.submit_upi_payment(sv_test.id('k_i1'), 1500, 'UTR880000001', (now() at time zone 'Asia/Kolkata')::date - 1);
+select status from public.submit_upi_payment(sv_test.id('k_i3'), 1500, 'UTR880000003', (now() at time zone 'Asia/Kolkata')::date - 3);
+reset role;
+select sv_test.act_as('d0000000-0000-4000-8000-000000000003');
+select sv_test.expect_value('m7: verified LATER, converted at the rate of the day the customer PAID (yesterday 8800)',
+  $q$select gold_weight_g::text from public.admin_verify_upi_payment((select id from public.savings_payments where upi_reference = 'UTR880000001'))$q$, '0.170');
+select sv_test.expect_error('m7: no rate entered for the paid date -> verification refused (no guessing)',
+  $q$select * from public.admin_verify_upi_payment((select id from public.savings_payments where upi_reference = 'UTR880000003'))$q$, 'gold_rate_missing_for_date');
+reset role;
+select sv_test.act_as('d0000000-0000-4000-8000-000000000004');
+select sv_test.expect_value('m7: counter payment today uses today''s rate (1500 / 8900)',
+  $q$select gold_weight_g::text from public.record_instore_payment(sv_test.id('k_i2'), 1500, 'cash', (now() at time zone 'Asia/Kolkata')::date)$q$, '0.169');
+reset role;
+
 -- ---------------------------------------------------------------- audit trail
+select sv_test.act_as('d0000000-0000-4000-8000-000000000001');
 select sv_test.expect_value('audit: customers cannot read the audit log',
   $q$select count(*)::text from public.audit_logs where table_name like 'savings_%'$q$, '0');
 reset role;

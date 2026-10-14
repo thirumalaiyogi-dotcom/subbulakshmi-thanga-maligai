@@ -21,8 +21,8 @@ def cfg(url, key):
     out = re.sub(r"url: '[^']*',", "url: '" + url + "',", CONFIG, count=1)
     return re.sub(r"anonKey: '[^']*'", "anonKey: '" + key + "'", out, count=1)
 
-async def ctx_with(b, key=FAKE_ANON, url='https://mockproject.supabase.co', width=390):
-    ctx = await b.new_context(viewport={'width': width, 'height': 820})
+async def ctx_with(b, key=FAKE_ANON, url='https://mockproject.supabase.co', width=390, tz=None):
+    ctx = await b.new_context(viewport={'width': width, 'height': 820}, **({'timezone_id': tz} if tz else {}))
     await ctx.route('**/*fonts*/**', lambda r: r.abort())
     await ctx.route('**/js/config.js', lambda r: r.fulfill(body=cfg(url, key), content_type='application/javascript'))
     await ctx.route('**/js/vendor/supabase.js', lambda r: r.fulfill(body=MOCK, content_type='application/javascript'))

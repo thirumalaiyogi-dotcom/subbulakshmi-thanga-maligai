@@ -24,7 +24,7 @@ addStrings({
   retireScheme: 'Close scheme', schemeIdLbl: 'Scheme code', schemeIdHint: 'Lower-case letters, digits and hyphens, e.g. dhanalakshmi. Cannot be changed later.',
   termsWarn: 'Enter ONLY terms that the shop owner has formally approved. Leave a field empty if it has not been decided — the app will show "Not configured". Saving changes to an approved scheme returns it to NOT APPROVED until approval is recorded again. Existing enrollments keep the terms they joined with.',
   notSet: '— Not configured —', durationMonths: 'Duration (months)', minAmount: 'Minimum monthly amount (₹)', maxAmount: 'Maximum monthly amount (₹)',
-  allowedAmountsLbl: 'Allowed fixed amounts (₹, comma separated)', windowStart: 'Payment window — from day', windowEnd: 'Payment window — to day',
+  allowedAmountsLbl: 'Allowed fixed amounts (₹, comma separated) — leave empty to allow any amount between the minimum and maximum', windowStart: 'Payment window — from day', windowEnd: 'Payment window — to day',
   conversionLbl: 'Gold conversion', purityLbl: 'Conversion purity', redemptionAfterLbl: 'Redemption available after (months)',
   termsEnLbl: 'Full terms (English)', termsTaLbl: 'Full terms (Tamil)', saveTerms: 'Save terms', termsSaved: 'Scheme saved. It is NOT APPROVED until you record the owner\'s approval.',
   approveTitle: 'Record the shop owner\'s approval', approveNoteLbl: 'How was it approved?', approveNoteHint: 'e.g. "Signed terms sheet dated 20-10-2026, approved by owner Mr. …". At least 10 characters.',
@@ -40,7 +40,7 @@ addStrings({
   schemeLbl: 'Scheme', noApprovedSchemes: 'No scheme has approved terms yet.', enrolledToast: 'Enrollment created.', decisionSaved: 'Decision saved.',
   /* payments */
   pendingUpi: 'Pending verification', processedPay: 'Processed', verifyPay: 'Verify', rejectPay: 'Reject', voidPay: 'Void (correct)',
-  verifyPayTitle: 'Verify this UPI payment?', verifyChecklist: 'Only verify after you have found this exact amount and reference in the store\'s bank / UPI statement.',
+  verifyPayTitle: 'Verify this UPI payment?', verifyChecklist: 'Only verify after you have found this exact amount, reference AND payment date in the store\'s bank / UPI statement. (Schemes that convert at the paid date\'s rate use that date.)',
   verifiedToastLive: 'Payment verified · receipt', rejectPayTitle: 'Reject this payment reference', rejectedPayToast: 'Payment rejected.',
   voidTitle: 'Void this verified payment?', voidHint: 'Use only to correct a mistake. The record stays in the passbook marked VOIDED with your reason.', voidedToast: 'Payment voided.',
   adminOnlyVerify: 'Only an admin can verify or reject customer UPI payments.', customerLbl: 'Customer',
@@ -78,7 +78,7 @@ addStrings({
   retireScheme: 'திட்டத்தை நிறுத்து', schemeIdLbl: 'திட்டக் குறியீடு', schemeIdHint: 'ஆங்கிலச் சிறிய எழுத்துகள், எண்கள், hyphen மட்டும், உதா. dhanalakshmi. பின்னர் மாற்ற இயலாது.',
   termsWarn: 'கடை உரிமையாளர் அதிகாரப்பூர்வமாக ஒப்புதல் அளித்த விதிமுறைகளை மட்டுமே உள்ளிடவும். முடிவு செய்யப்படாத இடத்தைக் காலியாக விடுங்கள் — செயலி "அமைக்கப்படவில்லை" எனக் காட்டும். அங்கீகரிக்கப்பட்ட திட்டத்தை மாற்றினால், ஒப்புதல் மீண்டும் பதிவாகும் வரை அது "ஒப்புதல் இல்லை" நிலைக்குத் திரும்பும். ஏற்கனவே சேர்ந்தவர்களுக்கு அவர்கள் சேர்ந்தபோதைய விதிமுறைகளே பொருந்தும்.',
   notSet: '— அமைக்கப்படவில்லை —', durationMonths: 'காலம் (மாதங்கள்)', minAmount: 'குறைந்தபட்ச மாதத் தொகை (₹)', maxAmount: 'அதிகபட்ச மாதத் தொகை (₹)',
-  allowedAmountsLbl: 'அனுமதிக்கப்பட்ட நிலைத் தொகைகள் (₹, காற்புள்ளியால் பிரிக்கவும்)', windowStart: 'செலுத்தும் காலம் — தொடக்கத் தேதி', windowEnd: 'செலுத்தும் காலம் — இறுதித் தேதி',
+  allowedAmountsLbl: 'அனுமதிக்கப்பட்ட நிலைத் தொகைகள் (₹, காற்புள்ளியால் பிரிக்கவும்) — குறைந்தபட்சம்–அதிகபட்சம் இடையே எந்தத் தொகையும் அனுமதிக்கக் காலியாக விடவும்', windowStart: 'செலுத்தும் காலம் — தொடக்கத் தேதி', windowEnd: 'செலுத்தும் காலம் — இறுதித் தேதி',
   conversionLbl: 'தங்க மாற்றம்', purityLbl: 'மாற்றத் தூய்மை', redemptionAfterLbl: 'மீட்பு கிடைக்கும் காலம் (மாதங்கள்)',
   termsEnLbl: 'முழு விதிமுறைகள் (ஆங்கிலம்)', termsTaLbl: 'முழு விதிமுறைகள் (தமிழ்)', saveTerms: 'விதிமுறைகளைச் சேமி', termsSaved: 'திட்டம் சேமிக்கப்பட்டது. உரிமையாளர் ஒப்புதலைப் பதிவு செய்யும் வரை இது "ஒப்புதல் இல்லை" நிலையில் இருக்கும்.',
   approveTitle: 'கடை உரிமையாளரின் ஒப்புதலைப் பதிவு செய்யவும்', approveNoteLbl: 'ஒப்புதல் எப்படிப் பெறப்பட்டது?', approveNoteHint: 'உதா. "20-10-2026 தேதியிட்ட கையொப்பமிட்ட விதிமுறைத் தாள், உரிமையாளர் திரு. … ஒப்புதல்". குறைந்தது 10 எழுத்துகள்.',
@@ -92,7 +92,7 @@ addStrings({
   findCustomer: 'வாடிக்கையாளர் (பெயர் அல்லது கைபேசி எண்ணால் தேடவும்)', noCustomers: 'பொருந்தும் வாடிக்கையாளர் இல்லை. வாடிக்கையாளர் முதலில் செயலியில் பதிவு செய்ய வேண்டும்.',
   schemeLbl: 'திட்டம்', noApprovedSchemes: 'எந்தத் திட்டத்துக்கும் இன்னும் அங்கீகரிக்கப்பட்ட விதிமுறைகள் இல்லை.', enrolledToast: 'பதிவு உருவாக்கப்பட்டது.', decisionSaved: 'முடிவு சேமிக்கப்பட்டது.',
   pendingUpi: 'சரிபார்ப்பில்', processedPay: 'முடிந்தவை', verifyPay: 'சரிபார்', rejectPay: 'நிராகரி', voidPay: 'ரத்து (திருத்தம்)',
-  verifyPayTitle: 'இந்த UPI தவணையைச் சரிபார்க்கவா?', verifyChecklist: 'கடையின் வங்கி / UPI அறிக்கையில் இதே தொகையையும் குறிப்பு எண்ணையும் கண்டறிந்த பிறகே சரிபார்க்கவும்.',
+  verifyPayTitle: 'இந்த UPI தவணையைச் சரிபார்க்கவா?', verifyChecklist: 'கடையின் வங்கி / UPI அறிக்கையில் இதே தொகை, குறிப்பு எண், செலுத்திய தேதி மூன்றையும் கண்டறிந்த பிறகே சரிபார்க்கவும். (செலுத்திய நாள் விலையில் மாற்றும் திட்டங்கள் அந்தத் தேதியையே பயன்படுத்தும்.)',
   verifiedToastLive: 'தவணை சரிபார்க்கப்பட்டது · ரசீது', rejectPayTitle: 'இந்தக் குறிப்பு எண்ணை நிராகரி', rejectedPayToast: 'தவணை நிராகரிக்கப்பட்டது.',
   voidTitle: 'சரிபார்க்கப்பட்ட இந்தத் தவணையை ரத்து செய்யவா?', voidHint: 'தவறைத் திருத்த மட்டுமே பயன்படுத்தவும். பதிவு பாஸ்புக்கில் உங்கள் காரணத்துடன் "ரத்து" எனக் குறிக்கப்பட்டு அப்படியே இருக்கும்.', voidedToast: 'தவணை ரத்து செய்யப்பட்டது.',
   adminOnlyVerify: 'வாடிக்கையாளர் UPI தவணைகளை admin மட்டுமே சரிபார்க்கவோ நிராகரிக்கவோ முடியும்.', customerLbl: 'வாடிக்கையாளர்',
@@ -265,7 +265,7 @@ function fillSchemeEdit(token) {
         numF('scMin', t('minAmount'), s.min_installment) + numF('scMax', t('maxAmount'), s.max_installment) +
         field({ id: 'scAmounts', label: t('allowedAmountsLbl'), value: (s.allowed_fixed_amounts || []).map(Number).join(', '), required: false, attrs: 'maxlength="200" autocomplete="off"' }) +
         numF('scWinFrom', t('windowStart'), s.payment_window_start_day) + numF('scWinTo', t('windowEnd'), s.payment_window_end_day) +
-        sel('scConv', t('conversionLbl'), opt('none', t('gc_none'), s.gold_conversion || 'none') + opt('verification_date_rate', tf('gc_verification_date_rate', { p: '22K/24K' }), s.gold_conversion)) +
+        sel('scConv', t('conversionLbl'), opt('none', t('gc_none'), s.gold_conversion || 'none') + opt('payment_date_rate', tf('gc_payment_date_rate', { p: '22K/24K' }), s.gold_conversion) + opt('verification_date_rate', tf('gc_verification_date_rate', { p: '22K/24K' }), s.gold_conversion)) +
         sel('scPurity', t('purityLbl'), opt('', t('notSet'), s.conversion_purity) + opt('22K', '22K', s.conversion_purity) + opt('24K', '24K', s.conversion_purity)) +
         numF('scRedeem', t('redemptionAfterLbl'), s.redemption_after_months) + '</div>' +
       ta('scTermsEn', t('termsEnLbl'), s.terms_en) + ta('scTermsTa', t('termsTaLbl'), s.terms_ta) +
@@ -346,7 +346,7 @@ function fillPaymentsAdmin(token) {
         '<dt>' + t('installmentNo') + '</dt><dd>' + (p.savings_installments ? p.savings_installments.installment_no + ' · ' + svMonth(p.savings_installments.due_month) : '') + '</dd>' +
         '<dt>' + t('amount') + '</dt><dd><b>' + inr(p.amount) + '</b></dd><dt>' + t('upiRef') + '</dt><dd class="mono"><b>' + esc(p.upi_reference || '') + '</b></dd>' +
         '<dt>' + t('paidOnLbl') + '</dt><dd>' + fmtDate(p.paid_on) + '</dd><dt>' + t('submittedAt') + '</dt><dd>' + svTime(p.submitted_at) + '</dd></dl>' +
-      (Auth.isAdmin ? '<div class="qcard-actions"><button class="btn btn-outline btn-sm" data-action="sv-reject-pay" data-id="' + p.id + '">' + ic('x') + t('rejectPay') + '</button><button class="btn btn-ok btn-sm" data-action="sv-verify-pay" data-id="' + p.id + '" data-amt="' + p.amount + '" data-ref="' + esc(p.upi_reference || '') + '">' + ic('check') + t('verifyPay') + '</button></div>' : '') +
+      (Auth.isAdmin ? '<div class="qcard-actions"><button class="btn btn-outline btn-sm" data-action="sv-reject-pay" data-id="' + p.id + '">' + ic('x') + t('rejectPay') + '</button><button class="btn btn-ok btn-sm" data-action="sv-verify-pay" data-id="' + p.id + '" data-amt="' + p.amount + '" data-ref="' + esc(p.upi_reference || '') + '" data-date="' + esc(p.paid_on || '') + '">' + ic('check') + t('verifyPay') + '</button></div>' : '') +
       '</article>').join('') + '</div>';
   }, 'retry');
 }
@@ -497,7 +497,7 @@ Object.assign(ACTIONS, {
     confirm: t('approveEnr'), done: t('decisionSaved'), run: (v, f) => AdminSv.decideEnrollment(b.dataset.id, true, ymToDate(f.elements.svStart.value), v) }),
   'sv-enr-reject': b => svReasonModal({ title: t('rejectEnrTitle'), label: t('rejectReason'), confirm: t('rejectEnr'), danger: true, done: t('decisionSaved'), run: v => AdminSv.decideEnrollment(b.dataset.id, false, null, v) }),
   'sv-verify-pay': async b => {
-    if (!(await confirmDialog({ title: t('verifyPayTitle'), message: t('amount') + ': <b>' + inr(b.dataset.amt) + '</b><br>' + t('upiRef') + ': <b class="mono">' + esc(b.dataset.ref) + '</b><br><br>' + t('verifyChecklist'), confirmText: t('verifyPay') }))) return;
+    if (!(await confirmDialog({ title: t('verifyPayTitle'), message: t('amount') + ': <b>' + inr(b.dataset.amt) + '</b><br>' + t('upiRef') + ': <b class="mono">' + esc(b.dataset.ref) + '</b><br>' + t('paidOnLbl') + ': <b>' + fmtDate(b.dataset.date) + '</b><br><br>' + t('verifyChecklist'), confirmText: t('verifyPay') }))) return;
     try { const r = await AdminSv.verify(b.dataset.id); toast(t('verifiedToastLive') + ' ' + r.receipt_number, 'ok'); render(); } catch (e) { toast(errorText(toApiError(e)), 'err'); }
   },
   'sv-reject-pay': b => svReasonModal({ title: t('rejectPayTitle'), label: t('rejectReason'), hint: t('rejectHint'), confirm: t('rejectPay'), danger: true, done: t('rejectedPayToast'), run: v => AdminSv.reject(b.dataset.id, v) }),
@@ -563,7 +563,7 @@ function ecAmountField() {
   const sel = $('#ecScheme'), box = $('#ecAmtBox'); if (!sel || !box) return;
   const s = (openEnrollCustomer.schemes || []).find(x => x.id === sel.value);
   box.innerHTML = s && s.contribution_type === 'fixed'
-    ? '<div class="field"><label for="ecAmt">' + t('chooseAmount') + ' <span class="req" aria-hidden="true">*</span></label><select id="ecAmt" name="ecAmt" aria-describedby="ecAmt-err"><option value="">' + t('selectAmount') + '</option>' + (s.allowed_fixed_amounts || []).map(a => '<option value="' + Number(a) + '">' + inr(a) + '</option>').join('') + '</select><p class="err" id="ecAmt-err" role="alert"></p></div>'
+    ? svFixedAmountField('ecAmt', s)
     : '<p class="small muted">' + t('enrollFlexNote') + '</p>';
 }
 CHANGES['sv-ec-scheme'] = () => ecAmountField();
@@ -581,12 +581,13 @@ FORMS['sv-enroll-customer'] = async f => {
   const E = f.elements, cust = E.ecCust.value, amtEl = E.ecAmt;
   let ok = true;
   if (f.querySelector('#ecCust')) ok = setErr(f, 'ecCust', cust ? '' : t('noCustomers')) && ok;
-  if (amtEl) ok = setErr(f, 'ecAmt', amtEl.value ? '' : t('errSelectAmount')) && ok;
+  const sch = (openEnrollCustomer.schemes || []).find(x => x.id === E.ecScheme.value);
+  if (amtEl) ok = setErr(f, 'ecAmt', sch ? svFixedAmountErr(sch, amtEl.value) : (amtEl.value ? '' : t('errSelectAmount'))) && ok;
   ok = setErr(f, 'ecStart', ymToDate(E.ecStart.value) ? '' : t('err_invalid_start_month')) && ok;
   if (!ok || !cust) { focusFirstInvalid(f); return; }
   const btn = document.querySelector('button[form="svEnrForm"]'); if (btn) btn.disabled = true;
   try {
-    const r = await AdminSv.createEnrollment(cust, E.ecScheme.value, amtEl ? Number(amtEl.value) : null, ymToDate(E.ecStart.value), E.ecNote.value.trim());
+    const r = await AdminSv.createEnrollment(cust, E.ecScheme.value, amtEl ? svAmountValue(amtEl.value) : null, ymToDate(E.ecStart.value), E.ecNote.value.trim());
     closeModal(true); toast(t('enrolledToast') + ' · ' + r.enrollment_number, 'ok'); go('records/' + r.enrollment_id);
   } catch (e) { svErr('#ecErr', e); if (btn) btn.disabled = false; }
 };

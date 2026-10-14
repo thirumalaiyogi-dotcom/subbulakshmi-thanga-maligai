@@ -245,12 +245,15 @@
     db.audit_logs.push({ id: db.svSeq.audit++, actor_id: uid() || null, table_name: table, record_id: String((newRow || oldRow || {}).id || ''), action,
       old_data: oldRow ? JSON.parse(JSON.stringify(oldRow)) : null, new_data: newRow ? JSON.parse(JSON.stringify(newRow)) : null, created_at: now() });
   }
-  const today = () => new Date().toISOString().slice(0, 10);
-  const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
+  const istDate = ms => new Date(ms + 330 * 60000).toISOString().slice(0, 10);   // the database works in Asia/Kolkata dates
+  const today = () => istDate(Date.now());
+  const daysAgo = n => istDate(Date.now() - n * 864e5);
   const ymd = (y, m) => y + '-' + String(m).padStart(2, '0') + '-01';
   const addMonths = (d, n) => { const [y, m] = d.split('-').map(Number); const t = (m - 1) + n; return ymd(y + Math.floor(t / 12), (t % 12) + 1); };
   const year = () => new Date().getFullYear();
-  const termsDone = s => s.contribution_type && s.duration_months && (s.contribution_type !== 'fixed' || (s.allowed_fixed_amounts || []).length) && (s.contribution_type !== 'flexible' || s.min_installment != null) && (s.terms_en || '').trim().length >= 20 && (s.terms_ta || '').trim().length >= 20;
+  const termsDone = s => s.contribution_type && s.duration_months && (s.contribution_type !== 'fixed' || (s.allowed_fixed_amounts || []).length || s.min_installment != null) && (s.contribution_type !== 'flexible' || s.min_installment != null) && (s.terms_en || '').trim().length >= 20 && (s.terms_ta || '').trim().length >= 20;
+  const fixedOk = (s, amt) => { amt = Number(amt); if (!(amt > 0)) return false; const list = (s.allowed_fixed_amounts || []).map(Number);
+    return list.length ? list.includes(amt) : (s.min_installment != null && amt >= Number(s.min_installment) && (s.max_installment == null || amt <= Number(s.max_installment))); };
   const amountErr = (e, i, amt) => {
     if (!(amt > 0) || Math.round(amt * 100) !== amt * 100) return 'invalid_amount';
     if (e.contribution_type === 'fixed') return Number(amt) !== Number(i.expected_amount || e.fixed_amount) ? 'amount_mismatch' : null;
@@ -258,10 +261,15 @@
     if (e.max_installment != null && amt > Number(e.max_installment)) return 'amount_out_of_range';
     return null;
   };
-  function conversion(e, amount) {
+  function conversion(e, amount, paidOn) {
     if (e.gold_conversion === 'none') return {};
-    const r = db.gold_rates.filter(g => g.purity === e.conversion_purity && g.status === 'active' && g.effective_at <= now()).sort((a, b) => b.effective_at.localeCompare(a.effective_at) || b.id - a.id)[0];
-    if (!r) return { err: 'gold_rate_missing' };
+    let pool = db.gold_rates.filter(g => g.purity === e.conversion_purity && g.status === 'active' && g.effective_at <= now());
+    if (e.gold_conversion === 'payment_date_rate') {
+      const ist = iso => new Date(new Date(iso).getTime() + 330 * 60000).toISOString().slice(0, 10);   // IST calendar date
+      pool = pool.filter(g => ist(g.effective_at) === paidOn);
+    }
+    const r = pool.sort((a, b) => b.effective_at.localeCompare(a.effective_at) || b.id - a.id)[0];
+    if (!r) return { err: e.gold_conversion === 'payment_date_rate' ? 'gold_rate_missing_for_date' : 'gold_rate_missing' };
     return { gold_rate_id: r.id, gold_purity: r.purity, gold_rate_per_g: r.rate_per_gram, gold_weight_g: (Math.round(amount / Number(r.rate_per_gram) * 1000) / 1000).toFixed(3) };
   }
   const receipt = () => 'STM-RC-' + year() + '-' + String(db.svSeq.rc++).padStart(6, '0');
@@ -312,7 +320,7 @@
         if ((x = need())) return x;
         const pr = db.profiles.find(p => p.id === uid()); if (!pr || !pr.full_name || !pr.phone) return err('profile_incomplete');
         const s = db.savings_schemes.find(r => r.id === a.p_scheme_id); if (!s || s.approval_status !== 'approved' || !s.enrollment_open) return err('scheme_not_open');
-        if (s.contribution_type === 'fixed' ? !(s.allowed_fixed_amounts || []).map(Number).includes(Number(a.p_fixed_amount)) : a.p_fixed_amount != null) return err('invalid_amount');
+        if (s.contribution_type === 'fixed' ? !fixedOk(s, a.p_fixed_amount) : a.p_fixed_amount != null) return err('invalid_amount');
         if (db.savings_enrollments.some(e => e.customer_id === uid() && e.scheme_id === s.id && e.status === 'pending_approval')) return err('duplicate_request');
         const e = newEnrollment(uid(), s, a.p_fixed_amount, uid());
         return ok([{ enrollment_id: e.id, enrollment_number: e.enrollment_number, status: e.status }]);
@@ -341,7 +349,7 @@
         if ((x = admin())) return x;
         if (!db.profiles.some(p => p.id === a.p_customer_id)) return err('customer_not_found');
         const s = db.savings_schemes.find(r => r.id === a.p_scheme_id); if (!s || s.approval_status !== 'approved') return err('scheme_not_open');
-        if (s.contribution_type === 'fixed' ? !(s.allowed_fixed_amounts || []).map(Number).includes(Number(a.p_fixed_amount)) : a.p_fixed_amount != null) return err('invalid_amount');
+        if (s.contribution_type === 'fixed' ? !fixedOk(s, a.p_fixed_amount) : a.p_fixed_amount != null) return err('invalid_amount');
         if (!/^\d{4}-\d{2}-01$/.test(a.p_start_month || '')) return err('invalid_start_month');
         const e = newEnrollment(a.p_customer_id, s, a.p_fixed_amount, uid()); Object.assign(e, { decided_by: uid(), decided_at: now(), decision_note: a.p_note || null });
         activate(e, a.p_start_month);
@@ -368,7 +376,7 @@
         const p = db.savings_payments.find(r => r.id === a.p_payment_id); if (!p) return err('not_found');
         if (p.status !== 'pending_verification') return err('invalid_status_transition');
         const e = db.savings_enrollments.find(r => r.id === p.enrollment_id); if (e.status !== 'active') return err('enrollment_not_active');
-        const c = conversion(e, Number(p.amount)); if (c.err) return err(c.err);
+        const c = conversion(e, Number(p.amount), p.paid_on); if (c.err) return err(c.err);
         const rc = receipt(); updPay(p, Object.assign({ status: 'verified', verified_by: uid(), verified_at: now(), receipt_number: rc }, c)); setInst(p.installment_id, 'paid');
         return ok([{ receipt_number: rc, gold_weight_g: c.gold_weight_g || null }]);
       }
@@ -389,7 +397,7 @@
         if (i.status === 'pending_verification') return err('payment_pending_verification');
         if (i.status !== 'pending_payment') return err('installment_not_payable');
         const ae = amountErr(e, i, Number(a.p_amount)); if (ae) return err(ae);
-        const c = conversion(e, Number(a.p_amount)); if (c.err) return err(c.err);
+        const c = conversion(e, Number(a.p_amount), a.p_paid_on); if (c.err) return err(c.err);
         if (ref && refUsed(ref)) return err('duplicate_reference');
         const p = Object.assign({ id: uuid(), receipt_number: receipt(), enrollment_id: e.id, installment_id: i.id, customer_id: e.customer_id, amount: Number(a.p_amount).toFixed(2), channel: 'in_store', method: a.p_method, upi_reference: ref,
           store_reference: a.p_store_reference || null, paid_on: a.p_paid_on, status: 'verified', submitted_by: uid(), submitted_at: now(), verified_by: uid(), verified_at: now(), rejected_by: null, rejected_at: null, rejection_reason: null,

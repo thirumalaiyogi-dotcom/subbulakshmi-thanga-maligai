@@ -2,6 +2,7 @@
 
 **Date:** 14 Oct 2026
 **Step 1 audit:** see [PHASE5_AUDIT.md](PHASE5_AUDIT.md).
+**Update 15 Oct 2026 (migration 7):** the store's published terms were shared. Two options were added to model them: conversion at the rate of the **date paid**, and **fixed amounts in a min–max range**. The values to enter are in [SCHEME_TERMS_ENTRY.md](SCHEME_TERMS_ENTRY.md). They are entered by an admin; nothing is approved automatically.
 
 > **Not production-ready for real money yet.** The financial workflows are built and tested (see §4). Before customers' real savings are recorded, the following still need review:
 > - the shop owner's **official scheme terms** (§8);
@@ -21,7 +22,10 @@
 | `supabase/migrations/20261014000600_savings_functions.sql` | The only write path: 18 trusted functions + helpers |
 | `supabase/seed/02_savings_schemes.sql` | The two scheme **names**, created as DRAFT with no terms |
 | `supabase/PHASE5_UPDATE.sql` | One-paste update for a project that already has Phase 4 |
-| `supabase/tests/savings_security_tests.sql` | 103 database security / integrity tests |
+| `supabase/migrations/20261015000700_savings_terms_options.sql` | Migration 7: paid-date conversion; fixed amount in a range |
+| `supabase/PHASE5B_UPDATE.sql` | One-paste migration 7 for the existing project |
+| `docs/SCHEME_TERMS_ENTRY.md` | Exact values + EN/TA terms text from the store's published terms, with open questions |
+| `supabase/tests/savings_security_tests.sql` | 111 database security / integrity tests |
 | `js/savings-api.js` | Savings data layer + shared views (statuses, terms, passbook, rate card), EN + TA |
 | `js/customer/savings-live.js` | Customer screens on the real backend |
 | `js/admin/savings-live.js` | Admin screens on the real backend |
@@ -107,11 +111,11 @@
 
 | Suite | How | Result |
 |---|---|---|
-| Phase 5 database security (`savings_security_tests.sql`) | Real PostgreSQL (PGlite 0.5.9) + Supabase auth / storage shim | **103 / 103 pass** |
+| Phase 5 database security (`savings_security_tests.sql`) | Real PostgreSQL (PGlite 0.5.9) + Supabase auth / storage shim | **111 / 111 pass** (incl. 8 for migration 7) |
 | Phase 4 database security (`security_tests.sql`) | Same | **71 / 71 pass** |
-| Mutation check of the Phase 5 suite | 6 deliberate holes, each caught: UPI auto-credit, staff can verify, no unique UPI reference, no one-payment-per-installment, payments readable by all, customers can update payments | **6 / 6 caught** |
+| Mutation check of the Phase 5 suite | 6 deliberate holes, each caught: UPI auto-credit, staff can verify, no unique UPI reference, no one-payment-per-installment, payments readable by all, customers can update payments | **6 / 6 caught** (+2 / 2 for migration 7) |
 | One-paste SQL files | Phase 4 file then `PHASE5_UPDATE.sql` ×2 (your situation); and `SETUP_ALL_IN_ONE.sql` ×2 (fresh). Both suites run after each. | Both paths: no errors, 71 + 103 pass. Admin role and data kept. |
-| Savings browser test (`savings_live_test.py`) | Headless Chromium + test-only mock | **52 / 52 pass** |
+| Savings browser test (`savings_live_test.py`) | Headless Chromium + test-only mock, Asia/Kolkata timezone | **58 / 58 pass** (incl. the store's Kuber Lakshmi model) |
 | Phase 4 browser test (`live_mode_test.py`) | Same | **59 / 59 pass** |
 | DEMO-mode regression (`demo_mode_test.py`) | Headless Chromium | **57 / 57 pass** |
 | Layout (`layout_test.py`) | 6 widths (320–1280) × Tamil / English × DEMO + Supabase mode, including all new savings screens | **792 page loads, 0 problems** |

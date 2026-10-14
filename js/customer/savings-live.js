@@ -99,6 +99,7 @@ function pageSchemeLive(id) { return backBtn('schemes') + '<div id="svScheme">' 
 function fillSchemeLive(token) {
   fillAsync('#svScheme', token, () => SavingsApi.scheme(route.arg), s => {
     if (!s) return emptyState('layers', t('noResults'), t('noResultsHint'));
+    UI.svScheme = s;
     const approved = s.approval_status === 'approved';
     const desc = lang === 'ta' ? s.description_ta : s.description_en;
     let enroll;
@@ -106,8 +107,7 @@ function fillSchemeLive(token) {
     else if (!Auth.user) enroll = emptyState('user', t('enrollTitle'), t('enrollLoginMsg'), '<button class="btn btn-primary" data-go="account">' + t('loginOrRegister') + '</button>');
     else enroll = '<form class="panel" data-form="sv-enroll" data-scheme="' + esc(s.id) + '" novalidate><h2 class="h3">' + t('enrollTitle') + '</h2>' +
       (s.contribution_type === 'fixed'
-        ? '<div class="field"><label for="seAmt">' + t('chooseAmount') + ' <span class="req" aria-hidden="true">*</span></label><select id="seAmt" name="seAmt" aria-describedby="seAmt-err"><option value="">' + t('selectAmount') + '</option>' +
-          (s.allowed_fixed_amounts || []).map(a => '<option value="' + Number(a) + '">' + inr(a) + '</option>').join('') + '</select><p class="err" id="seAmt-err" role="alert"></p></div>'
+        ? svFixedAmountField('seAmt', s)
         : '<div class="note note--info">' + ic('info') + '<span>' + t('enrollFlexNote') + '</span></div>') +
       '<label class="check"><input type="checkbox" id="seAgree" name="seAgree" aria-describedby="seAgree-err"><span>' + t('enrollAgree') + '</span></label><p class="err" id="seAgree-err" role="alert"></p>' +
       '<p class="err" id="seErr" role="alert"></p><button class="btn btn-primary btn-block" type="submit">' + t('enrollSend') + '</button></form>';
@@ -121,12 +121,13 @@ function fillSchemeLive(token) {
 FORMS['sv-enroll'] = async f => {
   const amtSel = f.elements.seAmt, agree = f.elements.seAgree.checked;
   let ok = true;
-  if (amtSel) ok = setErr(f, 'seAmt', amtSel.value ? '' : t('errSelectAmount')) && ok;
+  const sch = UI.svScheme;
+  if (amtSel) ok = setErr(f, 'seAmt', sch ? svFixedAmountErr(sch, amtSel.value) : (amtSel.value ? '' : t('errSelectAmount'))) && ok;
   ok = setErr(f, 'seAgree', agree ? '' : t('errAgree')) && ok;
   if (!ok) { focusFirstInvalid(f); return; }
   const btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
   try {
-    const r = await SavingsApi.requestEnrollment(f.dataset.scheme, amtSel ? Number(amtSel.value) : null);
+    const r = await SavingsApi.requestEnrollment(f.dataset.scheme, amtSel ? svAmountValue(amtSel.value) : null);
     toast(t('enrollSentTitle') + ' · ' + r.enrollment_number, 'ok');
     go('passbook/' + r.enrollment_id);
   } catch (e) { $('#seErr').textContent = errorText(toApiError(e)); }

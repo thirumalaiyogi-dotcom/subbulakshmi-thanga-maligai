@@ -25,6 +25,8 @@ addStrings({
   t_contribution: 'Contribution', t_duration: 'Duration', t_minmax: 'Monthly amount range', t_allowedAmounts: 'Allowed monthly amounts',
   t_window: 'Payment window', t_conversion: 'Gold conversion', t_redemptionAfter: 'Redemption available after', monthsN: '{n} months',
   dayRange: 'Day {a}–{b} of each month', gc_none: 'No gold conversion', gc_verification_date_rate: 'Each verified payment ÷ the store\'s {p} rate on the verification date',
+  gc_payment_date_rate: 'Each payment ÷ the store\'s {p} rate for the date it was paid', fixedRange: '{a} – {b}, same amount every month', fixedRangeHint: 'Any amount from {a} to {b}. It stays the same for every installment.',
+  err_gold_rate_missing_for_date: 'No approved gold rate was entered for the date this payment was made. Enter that day\'s rate (Gold rate → Effective from = that date), then verify.',
   upTo: 'up to', fromAmt: 'from', enrollmentOpen: 'Enrollment open', enrollmentClosed: 'Enrollment closed',
   /* rates */
   goldRateTitle: 'Gold rate', currentRates: 'Today\'s store gold rate', perGram: 'per gram', effectiveFrom: 'Effective from',
@@ -75,6 +77,8 @@ addStrings({
   t_contribution: 'தவணை முறை', t_duration: 'காலம்', t_minmax: 'மாதத் தொகை வரம்பு', t_allowedAmounts: 'அனுமதிக்கப்பட்ட மாதத் தொகைகள்',
   t_window: 'செலுத்தும் காலம்', t_conversion: 'தங்க மாற்றம்', t_redemptionAfter: 'மீட்பு கிடைக்கும் காலம்', monthsN: '{n} மாதங்கள்',
   dayRange: 'ஒவ்வொரு மாதமும் {a}–{b} தேதி', gc_none: 'தங்க மாற்றம் இல்லை', gc_verification_date_rate: 'சரிபார்க்கப்பட்ட ஒவ்வொரு தவணையும் ÷ சரிபார்ப்பு நாளின் கடை {p} விலை',
+  gc_payment_date_rate: 'ஒவ்வொரு தவணையும் ÷ செலுத்திய நாளின் கடை {p} கிராம் விலை', fixedRange: '{a} – {b}, ஒவ்வொரு மாதமும் அதே தொகை', fixedRangeHint: '{a} முதல் {b} வரை எந்தத் தொகையும். எல்லாத் தவணைகளுக்கும் அதே தொகை.',
+  err_gold_rate_missing_for_date: 'இந்தத் தவணை செலுத்திய நாளுக்கான அங்கீகரிக்கப்பட்ட தங்க விலை உள்ளிடப்படவில்லை. அந்த நாளின் விலையை உள்ளிட்டு (தங்க விலை → நடைமுறை நேரம் = அந்தத் தேதி) பின் சரிபார்க்கவும்.',
   upTo: 'அதிகபட்சம்', fromAmt: 'குறைந்தது', enrollmentOpen: 'பதிவு திறந்துள்ளது', enrollmentClosed: 'பதிவு மூடப்பட்டுள்ளது',
   goldRateTitle: 'தங்க விலை', currentRates: 'இன்றைய கடை தங்க விலை', perGram: 'ஒரு கிராம்', effectiveFrom: 'நடைமுறைக்கு வந்தது',
   rateMissing: 'கடை இன்னும் அங்கீகரிக்கப்பட்ட தங்க விலையை உள்ளிடவில்லை.', rateStale: 'இந்த விலை 3 நாட்களுக்கு முன் உள்ளிடப்பட்டது; பழையதாக இருக்கலாம். கடையில் உறுதிசெய்யவும்.',
@@ -128,13 +132,14 @@ const nc = () => '<span class="muted">' + t('svNotSet') + '</span>';
 /* Terms list for a scheme row OR an enrollment's snapshot (same column names). */
 function svTermsList(s) {
   const amounts = s.contribution_type === 'fixed'
-    ? (s.allowed_fixed_amounts && s.allowed_fixed_amounts.length ? s.allowed_fixed_amounts.map(inr).join(', ') : nc())
+    ? (s.allowed_fixed_amounts && s.allowed_fixed_amounts.length ? s.allowed_fixed_amounts.map(inr).join(', ')
+      : (s.min_installment != null ? tf('fixedRange', { a: inr(s.min_installment), b: s.max_installment != null ? inr(s.max_installment) : '…' }) : nc()))
     : (s.contribution_type === 'flexible'
       ? (s.min_installment != null ? t('fromAmt') + ' ' + inr(s.min_installment) : '') + (s.max_installment != null ? ' · ' + t('upTo') + ' ' + inr(s.max_installment) : '') || nc()
       : nc());
   return '<dl class="kv kv--terms">' +
     '<dt>' + t('t_contribution') + '</dt><dd>' + (s.contribution_type ? t('ct_' + s.contribution_type) : nc()) + '</dd>' +
-    '<dt>' + (s.contribution_type === 'fixed' ? t('t_allowedAmounts') : t('t_minmax')) + '</dt><dd>' + amounts + '</dd>' +
+    '<dt>' + (s.contribution_type === 'fixed' && s.allowed_fixed_amounts && s.allowed_fixed_amounts.length ? t('t_allowedAmounts') : t('t_minmax')) + '</dt><dd>' + amounts + '</dd>' +
     '<dt>' + t('t_duration') + '</dt><dd>' + (s.duration_months ? tf('monthsN', { n: s.duration_months }) : nc()) + '</dd>' +
     '<dt>' + t('t_window') + '</dt><dd>' + (s.payment_window_start_day ? tf('dayRange', { a: s.payment_window_start_day, b: s.payment_window_end_day }) : nc()) + '</dd>' +
     '<dt>' + t('t_conversion') + '</dt><dd>' + (s.gold_conversion && s.gold_conversion !== 'none' ? tf('gc_' + s.gold_conversion, { p: s.conversion_purity || '' }) : t('gc_none')) + '</dd>' +
@@ -144,6 +149,23 @@ function svTermsText(s) {
   const txt = lang === 'ta' ? s.terms_ta : s.terms_en;
   return txt ? '<div class="terms-text">' + esc(txt).replace(/\n/g, '<br>') + '</div>' : '';
 }
+
+/* Monthly amount chooser for a FIXED scheme: a list of amounts, or any amount in min–max. */
+const svHasList = s => !!(s.allowed_fixed_amounts && s.allowed_fixed_amounts.length);
+function svFixedAmountField(id, s) {
+  if (svHasList(s)) return '<div class="field"><label for="' + id + '">' + t('chooseAmount') + ' <span class="req" aria-hidden="true">*</span></label><select id="' + id + '" name="' + id + '" aria-describedby="' + id + '-err"><option value="">' + t('selectAmount') + '</option>' +
+    s.allowed_fixed_amounts.map(a => '<option value="' + Number(a) + '">' + inr(a) + '</option>').join('') + '</select><p class="err" id="' + id + '-err" role="alert"></p></div>';
+  return field({ id, label: t('chooseAmount') + ' (₹)', hint: tf('fixedRangeHint', { a: inr(s.min_installment), b: s.max_installment != null ? inr(s.max_installment) : '…' }),
+    attrs: 'inputmode="numeric" maxlength="9" autocomplete="off"' });
+}
+function svFixedAmountErr(s, raw) {
+  const v = String(raw || '').replace(/[,\s₹]/g, '');
+  if (svHasList(s)) return v ? '' : t('errSelectAmount');
+  if (!/^\d{1,9}(\.\d{1,2})?$/.test(v)) return t('errAmount');
+  const n = Number(v);
+  return n >= Number(s.min_installment) && (s.max_installment == null || n <= Number(s.max_installment)) ? '' : t('err_invalid_amount');
+}
+const svAmountValue = raw => Number(String(raw || '').replace(/[,\s₹]/g, ''));
 
 /* Current store gold rate card (customer + admin). */
 function svRateCard(rates) {
